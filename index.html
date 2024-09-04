@@ -12,27 +12,46 @@
     <h1 class="page-title">Mine Sweeper</h1>
     <div class="game-container">
 
+
+        <h3 class="marked-counter">0</h3>
+
         <button class="smiley" onclick="onInit()">😋</button>
 
-        <h2><span class="lives"></span> LIVES LEFT</h2>
+        <h3 class="timer"></h3>
 
-        <table class="board">
+        <div class="main-container">
+
+            <div class="lives"> </div>
 
 
-        </table>
+            <table class="board">
+            </table>
 
-        <div class="hints">
-            <button class="hint">💡</button>
-            <button class="hint">💡</button>
-            <button class="hint">💡</button>
+            <div class="hints">
+                <button onclick="onClickHint(this)" class="hint">💡</button>
+                <button onclick="onClickHint(this)" class="hint">💡</button>
+                <button onclick="onClickHint(this)" class="hint">💡</button>
+            </div>
+
         </div>
+        <div class="level-container">
+            <button class="level" onclick="onClickLevel(4 ,2)">Beginner</button>
+            <button class="level" onclick="onClickLevel(8 ,14)">Medium</button>
+            <button class="level" onclick="onClickLevel(12 ,32)">Expert</button>
+        </div>
+
+
+
 
     </div>
     <footer>Zohar yevelkin</footer>
 
 
     <script src="js/utils.js"></script>
+    <script src="js/borad.js"></script>
+    <script src="js/neighbors.js"></script>
     <script src="js/main.js"></script>
+
 </body>
 
 </html>
