@@ -3,12 +3,14 @@
 const MINE = '💣'
 const FLAG = '🚨'
 const EMPTY = ''
+const LIVES = 2
+const HINTS = 3
 
 var gBoard
 
 var gLevel = {
-    SIZE: 4,
-    MINES: 2
+    SIZE: 8,
+    MINES: 14
 }
 
 var gGame = {
@@ -17,9 +19,13 @@ var gGame = {
     markedCount: 0,
     secsPassed: 0,
     lives: 0,
+    hints: HINTS
 }
 
 var gEmptyCells
+
+
+
 
 function onInit() {
     // Build the game Board 
@@ -28,17 +34,6 @@ function onInit() {
     // Render the game board to the dom
     renderBoard(gBoard)
 
-    // Disable context menu on right click when you click on game-container
-    const cells = document.querySelectorAll('.cell');
-    for (var i = 0; i < cells.length; i++) {
-        var elCell = cells[i]
-        elCell.addEventListener("contextmenu", (e) => {
-            e.preventDefault()
-            console.log('right');
-            onCellMarked(e)
-        });
-    }
-
     // Restart core setup
     updateLives()
     updateShownCount()
@@ -46,15 +41,28 @@ function onInit() {
     gGame.secsPassed = 0
     updateSmiley('🤩')
 
+    // disable the contextmenu and detect right click
+    const elGameContainer = document.querySelector('.game-container')
+    elGameContainer.addEventListener("contextmenu", (e) => {
+        e.preventDefault()
+        onCellMarked(e.srcElement)
+    });
+
     // Start the game
     gGame.isOn = true
 }
 
+
+
+
+// function that build our board(matrix)
 function buildBoard() {
     const board = []
     const length = gLevel.SIZE
+
     for (var i = 0; i < length; i++) {
         board[i] = []
+
         for (var j = 0; j < length; j++) {
             var cell = {
                 minesAround: 0,
@@ -65,87 +73,130 @@ function buildBoard() {
             board[i][j] = cell
         }
     }
+    // gets all empty cells after the first click
+    getEmptyCells(board)
 
-
-
-
-
-    console.log(`Debug board:\n`, board)
+    // placing the mines
+    for (var i = 0; i < gLevel.MINES; i++) {
+        placeMineOnBoard(board)
+    }
 
     return board
 }
 
-function placeRandomMine(board) {
+
+
+
+// function that run on the empty cells and place in random cell Mine
+function placeMineOnBoard(board) {
     var randomIdx = getRandomInt(0, gEmptyCells.length)
     var cell = gEmptyCells[randomIdx]
 
-    // console.log(cell);
-
     gEmptyCells.splice(randomIdx, 1)
+    // Modal
     board[cell.i][cell.j].isMine = true
 }
 
+
+
+
+// function that render the board we made to the dom
 function renderBoard(board) {
     var strHTML = ''
+
     for (var i = 0; i < board.length; i++) {
         strHTML += '<tr>'
+
         for (var j = 0; j < board[0].length; j++) {
+
             const cell = board[i][j]
-            cell.minesAround = setMinesNegsCount(i, j, board)
-            const className = `cell cell-${i}-${j}`
+            const className = cell.isShown ? `cell cell-${i}-${j} showed` : `cell cell-${i}-${j}`
 
 
             strHTML += `<td class="${className}" 
-                            onclick="onCellClicked(this , ${i} , ${j} )"
-                            contextmenu="onCellMarked(event)" 
-                            >
+                            onclick="onCellClicked(this , ${i},${j})">
                             ${EMPTY}
                         </td>`
         }
         strHTML += '</tr>'
     }
 
+
+    // render the board to HTML
     const elBoard = document.querySelector('.board')
     elBoard.innerHTML = strHTML
 }
 
+
+
+
+// Detect click on cell
 function onCellClicked(elCell, cellI, cellJ) {
+
+    // if game is of its returns
     if (!gGame.isOn) return
-    if (gGame.shownCount === 0) {
-        console.log(gGame.shownCount);
-        gEmptyCells = getEmptyCells(gBoard)
-        // for (var i = 0; i < gLevel.MINES; i++) {
-        //     placeRandomMine(gBoard)
-        // }
 
-
-        gBoard[1][1].isMine = true
-        gBoard[2][2].isMine = true
-        renderBoard(gBoard)
-    }
     const cell = gBoard[cellI][cellJ]
+    console.log(`cell:`, cell)
     var value = getCellValue(cellI, cellJ, gBoard)
     var location = { i: cellI, j: cellJ }
 
+    // check if its first turn
+    if (gGame.shownCount === 0) {
+
+        // check if its mine
+        if (value === MINE) {
+
+            // disbale the mine and counting the mine around
+            cell.isMine = false
+            cell.minesAround = setMinesNegsCount(cellI, cellJ, gBoard)
+
+            // get empty cells to put mine in empty cell
+            getEmptyCells(gBoard)
+            placeMineOnBoard(gBoard)
+
+        }
+        // Modal
+        cell.isShown = true
+        updateShownCount(1)
+
+        // DOM
+        renderCell(location, getCellValue(cellI, cellJ, gBoard))
+        elCell.classList.add('showed')
+
+        getEmptyCells(gBoard)
+        return
+    }
+
+    cell.minesAround = setMinesNegsCount(cellI, cellJ, gBoard)
+    value = getCellValue(cellI, cellJ, gBoard)
+
+
+    // if the cell is already opened return do nothing 
     if (cell.isShown) return
 
+    // if its opened a mine
     if (value === MINE) {
+
         if (gGame.lives === 0) {
+            // if the live is 0 game is over
             isGameWon(false)
         }
+        // Decrease one life
         updateLives(1)
+
         // Modal
         cell.isShown = true
 
         // Dom
         renderCell(location, value)
+        elCell.classList.add('boom')
+
         return
     }
 
     if (value === EMPTY) {
-        console.log('EMPTY')
-
-        var neighbors = getCellNeigList(cellI, cellJ, gBoard)
+        var neighbors = getCellNegsList(cellI, cellJ, gBoard)
         console.log(neighbors);
 
         showNeig(neighbors)
@@ -161,9 +212,12 @@ function onCellClicked(elCell, cellI, cellJ) {
 
 
     // DOM
+    cell.minesAround = setMinesNegsCount(cellI, cellJ, gBoard)
     renderCell(location, value)
+    elCell.classList.add('showed')
 
-    gEmptyCells = getEmptyCells(gBoard)
+
+    getEmptyCells(gBoard)
     if (checkGameOver()) isGameWon(true)
 
 
@@ -171,13 +225,16 @@ function onCellClicked(elCell, cellI, cellJ) {
 
 }
 
-function onCellMarked(e) {
+function onCellMarked(elCell) {
+    // If game is off it return
     if (!gGame.isOn) return
-    var elCell = e.srcElement
+
+    console.log(elCell);
+
     var cellPos = getCellByClass(elCell.classList)
     var cell = gBoard[cellPos.i][cellPos.j]
-
     if (cell.isShown) return
+
 
     // Modal
     cell.isMarked = !cell.isMarked
@@ -220,6 +277,9 @@ function showNeig(neighbors) {
         var location = { i: neighbor.i, j: neighbor.j }
         console.log(location);
         renderCell(location, value)
+
+        var elCell = document.querySelector(`.cell-${neighbor.i}-${neighbor.j}`)
+        elCell.classList.add('showed')
     }
 }
 
@@ -262,7 +322,7 @@ function updateLives(diff) {
     if (diff) {
         gGame.lives -= diff
     } else {
-        gGame.lives = 1
+        gGame.lives = LIVES
     }
     if (gGame.lives >= 0) {
         elLives.innerText = gGame.lives
@@ -271,7 +331,7 @@ function updateLives(diff) {
 }
 
 function checkGameOver() {
-    gEmptyCells = getEmptyCells(gBoard)
+    getEmptyCells(gBoard)
     return (gEmptyCells.length === 0 && gGame.markedCount === gLevel.MINES ||
         gEmptyCells.length === 0 && gGame.lives === 0)
 }
@@ -283,6 +343,7 @@ function isGameWon(isWin) {
     }
     if (!isWin) {
         updateSmiley('☠️')
+        showAllMines()
     }
 
     gGame.isOn = false
@@ -310,7 +371,7 @@ function setMinesNegsCount(cellI, cellJ, board) {
     return neighborsCount
 }
 
-function getCellNeigList(cellI, cellJ, board) {
+function getCellNegsList(cellI, cellJ, board) {
     var neighborsList = []
     for (var i = cellI - 1; i <= cellI + 1; i++) {
         if (i < 0 || i >= board.length) continue
@@ -324,13 +385,31 @@ function getCellNeigList(cellI, cellJ, board) {
 }
 
 function getEmptyCells(board) {
-    // console.log(board);
     var emptyCells = []
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
             if (board[i][j].isMine !== true && board[i][j].isShown !== true) emptyCells.push({ i, j })
         }
     }
-    // console.log(`emptyCells:`, emptyCells)
-    return emptyCells
+    gEmptyCells = emptyCells
+}
+
+function findAllMines(board) {
+    var mineCells = []
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            if (board[i][j].isMine === true && board[i][j].isShown !== true) mineCells.push({ i, j })
+        }
+    }
+    return mineCells
+}
+
+function showAllMines() {
+    var mineCells = findAllMines(gBoard)
+    for (var i = 0; i < mineCells.length; i++) {
+        var mine = mineCells[i]
+        renderCell(mine, MINE)
+        var elCell = document.querySelector(`.cell-${mine.i}-${mine.j}`)
+        elCell.classList.add('boom')
+    }
 }
