@@ -1,0 +1,32 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.color-pallet {}
+
+:root {
+    --html-background: rgb(227, 227, 227);
+    --main-title: white;
+    --cell-open-background-color: gray;
+}
+
+html {
+    background-color: var(--html-background);
+    font-size: 14px;
+}
+
+.page-title {
+    color: var(--main-title);
+    font-size: 4rem;
+}
+
+td {
+    width: 40px;
+    height: 40px;
+}
+
+.cell {
+    background-color: var(--cell-open-background-color);
+}
