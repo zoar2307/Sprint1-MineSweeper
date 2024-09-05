@@ -11,45 +11,81 @@
 <body onload="onInit()">
     <h1 class="page-title">Mine Sweeper</h1>
     <div class="game-container">
-
-
-        <h3 class="marked-counter">0</h3>
-
         <button class="smiley" onclick="onInit()">😋</button>
 
-        <h3 class="timer"></h3>
-
-        <div class="main-container">
-
+        <div class="utils">
             <div class="lives"> </div>
+            <div class="data">
 
-
-            <table class="board">
-            </table>
+                <h3>⌖<span class="marked-counter"></span></h3>
+                <h3 class="timer"></h3>
+            </div>
 
             <div class="hints">
                 <button onclick="onClickHint(this)" class="hint">💡</button>
                 <button onclick="onClickHint(this)" class="hint">💡</button>
                 <button onclick="onClickHint(this)" class="hint">💡</button>
             </div>
-
         </div>
+
+        <table class="board"></table>
+        <hr>
+
         <div class="level-container">
-            <button class="level" onclick="onClickLevel(4 ,2)">Beginner</button>
-            <button class="level" onclick="onClickLevel(8 ,14)">Medium</button>
-            <button class="level" onclick="onClickLevel(12 ,32)">Expert</button>
+            <button class="btn level" onclick="onClickLevel(4 ,2)">Beginner</button>
+            <button class="btn level" onclick="onClickLevel(8 ,14)">Medium</button>
+            <button class="btn level" onclick="onClickLevel(12 ,32)">Expert</button>
+        </div>
+        <hr>
+        <div class="bonus-container">
+            <button class="btn btn-bonus" onclick="onUndoClicked()">undo</button>
+            <button class="btn btn-bonus" onclick="onSafeClicked()">
+                safe click
+                <p><span class="safeClick">3</span> clicks available</p>
+            </button>
+            <button class="btn btn-bonus" onclick="onExterminatorClicked()">Exterminator</button>
+            <button class="btn btn-bonus" onclick="onMegaHintClicked()">Mega Hint</button>
+
+
         </div>
 
+        <div class="best-score-container">
+            <div class="best-score">
+                <h4>Beginner best time: <span class="beginner">Time</span></h4>
+            </div>
+            <hr>
+            <div class="best-score">
+                <h4>Medium best time: <span class="medium">Time</span></h4>
 
+            </div>
+            <hr>
+            <div class="best-score">
+                <h4>Expert best time: <span class="expert">Time</span></h4>
+
+            </div>
+        </div>
 
 
     </div>
+
+
+
+
+
+
     <footer>Zohar yevelkin</footer>
 
 
     <script src="js/utils.js"></script>
     <script src="js/borad.js"></script>
     <script src="js/neighbors.js"></script>
+    <script src="js/undo.js"></script>
+    <script src="js/safeClick.js"></script>
+    <script src="js/hint.js"></script>
+    <script src="js/exterminator.js"></script>
+    <script src="js/megahint.js"></script>
+    <script src="js/bestscore.js"></script>
+    <script src="js/manuallycreate.js"></script>
     <script src="js/main.js"></script>
 
 </body>

@@ -9,7 +9,6 @@ function buildBoard() {
 
     for (var i = 0; i < length; i++) {
         board[i] = []
-
         for (var j = 0; j < length; j++) {
             var cell = {
                 minesAround: 0,
@@ -19,13 +18,6 @@ function buildBoard() {
             }
             board[i][j] = cell
         }
-    }
-    // gets all empty cells after the first click
-    getEmptyCells(board)
-
-    // placing the mines
-    for (var i = 0; i < gLevel.MINES; i++) {
-        placeMineOnBoard(board)
     }
 
     return board
@@ -44,7 +36,6 @@ function renderBoard(board) {
 
         for (var j = 0; j < board[0].length; j++) {
             const cell = board[i][j]
-            cell.minesAround = setMinesNegsCount(i, j, board)
             const className = cell.isShown ? `cell cell-${i}-${j} showed` : `cell cell-${i}-${j}`
 
 
@@ -55,7 +46,6 @@ function renderBoard(board) {
         }
         strHTML += '</tr>'
     }
-
 
     // render the board to HTML
     const elBoard = document.querySelector('.board')
