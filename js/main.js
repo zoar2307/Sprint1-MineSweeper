@@ -171,6 +171,7 @@ function onCellClicked(elCell, cellI, cellJ) {
 
         // Modal
         cell.isShown = true
+        cell.isMarked = false
 
         // Dom
         renderCell(location, value)
@@ -195,6 +196,8 @@ function onCellClicked(elCell, cellI, cellJ) {
 
     // Modal
     cell.isShown = true
+    cell.isMarked = false
+
 
     // DOM
     cell.minesAround = setMinesNegsCount(cellI, cellJ, gBoard)
@@ -232,6 +235,7 @@ function onCellMarked(elCell) {
     // If game is off it return
     if (!gGame.isOn) return
 
+
     // check if its the first click
     if (gGame.shownCount === 0) return
 
@@ -244,6 +248,7 @@ function onCellMarked(elCell) {
 
     // if the cell already open it return
     if (cell.isShown) return
+    if (gGame.markedCount >= gMines) return
 
 
     // Modal

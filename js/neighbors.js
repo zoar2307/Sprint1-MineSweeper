@@ -27,6 +27,7 @@ function expandShown(board, elCell, cellI, cellJ) {
 
         // Modal
         cell.isShown = true
+        cell.isMarked = false
         updateShownCount(1)
 
         // Dom
@@ -58,6 +59,7 @@ function expandShown(board, elCell, cellI, cellJ) {
 
             // Modal
             cell.isShown = true
+            cell.isMarked = false
             updateShownCount(1)
 
             // Dom
