@@ -16,6 +16,7 @@ function showMegaHint() {
     for (var i = gFirstClick.i; i <= gSecondClick.i; i++) {
         for (var j = gFirstClick.j; j <= gSecondClick.j; j++) {
             var cell = { i, j }
+            if (gBoard[i][j].isMarked === true) continue
             cellToShow.push(cell)
         }
     }
