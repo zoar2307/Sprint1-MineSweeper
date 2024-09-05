@@ -55,7 +55,6 @@ function onInit() {
     renderBoard(gBoard)
 
     // Restart core setup
-    updateLives()
     updateShownCount()
     updateMarkedCount()
     gGame.secsPassed = 0
@@ -65,6 +64,8 @@ function onInit() {
     restartTimer()
     updateSafeClick()
     updateScore()
+    updateLives()
+
     gLastSteps = []
     gMines = gLevel.MINES
 
@@ -308,11 +309,13 @@ function updateShownCount(diff) {
 // update the lives count
 function updateLives(diff) {
     if (diff) {
+
         gGame.lives -= diff
         gMines--
         updateMarkedCount(0)
     } else {
         gGame.lives = LIVES
+        if (gLevel.SIZE === 4) gGame.lives = 1
     }
     if (gGame.lives >= 0) {
         renderLives()
