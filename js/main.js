@@ -32,7 +32,7 @@ var gGame = {
 }
 
 var gEmptyCells
-var gMineCells
+var gMineCells = []
 
 var gIsHintOn = false
 var gIsMegaHintOn = false
@@ -84,6 +84,8 @@ elGameContainer.addEventListener("contextmenu", (e) => {
 
 
 
+
+
 // Detect click on cell
 function onCellClicked(elCell, cellI, cellJ) {
 
@@ -92,6 +94,15 @@ function onCellClicked(elCell, cellI, cellJ) {
 
     const cell = gBoard[cellI][cellJ]
     if (cell.isShown) return
+
+    if (gIsManuallyCreateOn) {
+
+        if (gCountManuallyMines !== gLevel.MINES) {
+            placeManuallyMineOnBoard(cellI, cellJ, gBoard)
+
+        }
+        return
+    }
 
     // check if its first turn
     if (gGame.shownCount === 0) {
@@ -106,19 +117,20 @@ function onCellClicked(elCell, cellI, cellJ) {
 
         gEmptyCells = getEmptyCells(gBoard)
         console.log(gEmptyCells);
-
-        // placing the mines
-        for (var i = 0; i < gLevel.MINES; i++) {
-            placeMineOnBoard(gBoard)
+        if (!gIsManuallyCreatedBoard) {
+            // placing the mines
+            for (var i = 0; i < gLevel.MINES; i++) {
+                placeMineOnBoard(gBoard)
+            }
+            gMineCells = findAllMines(gBoard)
+            updateMarkedCount()
         }
-        gMineCells = findAllMines(gBoard)
-        updateMarkedCount()
 
 
 
 
     }
-
+    gIsManuallyCreatedBoard = false
     setMinesNegsCount(gBoard)
     const value = getCellValue(cellI, cellJ, gBoard)
     const location = { i: cellI, j: cellJ }
@@ -163,6 +175,7 @@ function onCellClicked(elCell, cellI, cellJ) {
         renderCell(location, value)
         elCell.classList.add('boom')
         recordStep(location)
+        if (checkGameOver()) isGameWon(true)
         return
     }
 
@@ -170,7 +183,6 @@ function onCellClicked(elCell, cellI, cellJ) {
         // if the cell is empty its open one deg
         var neighbors = getNonMineCellNegsList(cellI, cellJ, gBoard)
         recordStep(location)
-        // showNeig(neighbors)
         expandShown(gBoard, elCell, cellI, cellJ)
     }
     else {
