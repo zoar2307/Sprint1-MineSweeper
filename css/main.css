@@ -15,6 +15,9 @@
     --main-title: rgb(0, 210, 42);
     --font-pixel: "Pixelify Sans", sans-serif;
     --game-container-background-color: rgb(36, 36, 36);
+    --game-container-background-color-light: rgb(220, 220, 220);
+    --td-background-color: rgb(66, 66, 66);
+    --td-background-color-light: rgb(194, 194, 194);
 }
 
 html {
@@ -43,8 +46,14 @@ html {
     align-items: center;
     border-radius: 10px;
     filter: drop-shadow(0 0 5px rgb(0, 0, 0));
+    transition: 0.5s;
 
 
+}
+
+
+.game-container.light-mode {
+    background-color: var(--game-container-background-color-light);
 }
 
 .smiley {
@@ -141,11 +150,16 @@ td {
     padding: 10px;
     border: 1px solid black;
     border-radius: 10px;
-    background-color: rgb(66, 66, 66);
+    background-color: var(--td-background-color);
     transition: 0.5s;
     text-align: center;
     color: orange;
     cursor: pointer;
+}
+
+td.light-mode {
+    background-color: var(--td-background-color-light);
+    color: black;
 }
 
 td:hover {
