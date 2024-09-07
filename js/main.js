@@ -171,7 +171,10 @@ function onCellClicked(elCell, cellI, cellJ) {
 
         // Modal
         cell.isShown = true
-        cell.isMarked = false
+        if (cell.isMarked === true) {
+            cell.isMarked = false
+
+        }
 
         // Dom
         renderCell(location, value)
@@ -288,7 +291,7 @@ function onCellMarked(elCell) {
 function updateMarkedCount(diff) {
     var elMarked = document.querySelector('.marked-counter')
 
-    if (diff) {
+    if (diff || diff === 0) {
         gGame.markedCount += diff
     } else {
         gGame.markedCount = 0
