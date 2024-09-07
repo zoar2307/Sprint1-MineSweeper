@@ -248,7 +248,6 @@ function onCellMarked(elCell) {
 
     // if the cell already open it return
     if (cell.isShown) return
-    if (gGame.markedCount >= gMines) return
 
 
     // Modal
@@ -257,7 +256,9 @@ function onCellMarked(elCell) {
         var diff = -1
         elCell.classList.remove('marked')
 
+
     } else {
+        if (gGame.markedCount >= gMines) return
         cell.isMarked = true
         var diff = 1
         elCell.classList.add('marked')
